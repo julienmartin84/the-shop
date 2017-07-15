@@ -19,13 +19,17 @@ class Products extends React.Component {
             products: PRODUCTS,
             search: "",
             stockChecked: false,
-            sort: {name: "", order: 0}
+            sort: {name: "", order: 0},
+            key: 0,
+            productToUpdate: undefined
         }
+
         this.searchChange = this.searchChange.bind(this);
         this.stockChange = this.stockChange.bind(this);
         this.removeProduct = this.removeProduct.bind(this);
-        this.addProduct = this.addProduct.bind(this);
+        this.addOrUpdateProduct = this.addOrUpdateProduct.bind(this);
         this.sort = this.sort.bind(this);
+        this.populateForm = this.populateForm.bind(this);
     }
 
     filterProductsList(filter, stockChecked) {
@@ -87,10 +91,39 @@ class Products extends React.Component {
         this.refreshProductsList();
     }
 
-    addProduct(product) {
-        product.id = this.findAvailableKey();
-        PRODUCTS[product.id] = product;
-        this.sort({name: this.state.sort.name, order: this.state.sort.order});
+    addOrUpdateProduct(product) {
+        if (!product.id) {
+            product.id = this.findAvailableKey();
+            PRODUCTS[product.id] = product;
+            this.sort({name: this.state.sort.name, order: this.state.sort.order});
+        }
+        else {
+            PRODUCTS[this.state.key] = product;
+            this.setState({
+                key: 0,
+                productToUpdate: undefined
+            });
+            this.sort({name: this.state.sort.name, order: this.state.sort.order});
+        }
+    }
+
+    findKeyInPRODUCTS(product){
+        var keys = Object.keys(PRODUCTS);
+        var retour;
+        keys.forEach(function (key) {
+            if (PRODUCTS[key] === product) {
+                retour = key;
+            }
+        });
+        return retour;
+    }
+
+    populateForm(product) {
+        var key = this.findKeyInPRODUCTS(product);
+        this.setState({
+            key: key,
+            productToUpdate: product
+        });
     }
 
     refreshProductsList() {
@@ -145,8 +178,8 @@ class Products extends React.Component {
             <div>
                 <h1>The shop</h1>
                 <Filters search={this.state.search} cible={this.searchChange} stockChecked={this.state.stockChecked} cible2={this.stockChange} />
-                <ProductsTable products={this.state.products} remove={this.removeProduct} sort={this.sort} status={this.state.sort}/>
-                <ProductForm add={this.addProduct}/>
+                <ProductsTable products={this.state.products} remove={this.removeProduct} sort={this.sort} status={this.state.sort} populate={this.populateForm} />
+                <ProductForm addOrUpdate={this.addOrUpdateProduct} toUpdate={this.state.productToUpdate} />
             </div>
         );
     }

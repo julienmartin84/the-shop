@@ -8,7 +8,7 @@ class ProductsTable extends React.Component {
         var productsArray = [];
         var clefs = Object.keys(this.props.products);
         clefs.map((clef) => productsArray.push(this.props.products[clef]));
-        productsArray.forEach((prod) => rows.push(<TableRow remove={this.props.remove} product={prod} key={prod.id} />));
+        productsArray.forEach((prod) => rows.push(<TableRow remove={this.props.remove} product={prod} key={prod.id} populate={this.props.populate} />));
         
         return(
             <table>

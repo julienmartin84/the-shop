@@ -14,6 +14,9 @@ class TableRow extends React.Component {
                 <td>
                     <button onClick={() => this.props.remove(this.props.product.id)}>x</button>
                 </td>
+                <td>
+                    <button onClick={() => this.props.populate(this.props.product)}>edit</button>
+                </td>
             </tr>
         );
     }
